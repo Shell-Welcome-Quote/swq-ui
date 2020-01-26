@@ -43,9 +43,18 @@ function deploy() {
   fi
 }
 
-function main() {
-  local -r deployEndpoint="${1}"
+function getEnv() {
+  if [[ "${BRANCH_NAME}" == "master" ]]; then
+    echo prod
+  elif [[ "${BRANCH_NAME}" == "develop" ]]; then
+    echo dev
+  elif [[ "${BRANCH_NAME}" == "test" ]]; then
+    echo test
+  fi
+}
 
+function main() {
+  local -r deployEndpoint="$(getEnv)"
   local -r imageName="${DOCKER_PRIVATE_REGISTRY}/${DOCKER_IMAGE}"
   local -r imageTag=$(calculateContainerTag)
   local -r imageFullId="${imageName}:${imageTag}"
@@ -67,4 +76,4 @@ function main() {
   deploy "${deployEndpoint}"
 }
 
-main "${1}"
+main
