@@ -1,0 +1,52 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+    branches:
+      - master
+      - develop
+env:
+  DOCKER_IMAGE: swq-ui
+  DOCKER_PRIVATE_REGISTRY: docker.korniychuk.pro
+  DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
+  DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+  DEPLOY_TRIGGER_URL: https://quote.korniychuk.pro/deploy
+  DEPLOY_BASEAUTH_USER: ${{secrets.DEPLOY_BASEAUTH_USER}}
+  DEPLOY_BASEAUTH_PASSWORD: ${{secrets.DEPLOY_BASEAUTH_PASSWORD}}
+
+jobs:
+  prepush-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - name: NPM install
+        run: npm ci
+      - name: Runing prepush
+        run: npm run prepush
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: dist
+          path: dist
+
+  publish:
+    needs: prepush-and-build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Download 'dist' from the previous Job
+        uses: actions/download-artifact@v1
+        with:
+          name: dist
+      - name: Build the Docker image
+        run: 'echo "Branch: ${GIT_BRANCH}"'
+        env:
+          GIT_BRANCH: ${{ github.ref }}
+#         run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
