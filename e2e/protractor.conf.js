@@ -13,7 +13,11 @@ exports.config = {
     './src/**/*.e2e-spec.ts'
   ],
   capabilities: {
-    browserName: 'chrome'
+    'browserName': process.env.PROTRACTOR_BROWSER || 'chrome',
+    // Using headless Chrome
+    chromeOptions: {
+      args: ['--headless', '--disable-gpu', '--start-maximized']
+    },
   },
   directConnect: true,
   baseUrl: 'http://localhost:4200/',
