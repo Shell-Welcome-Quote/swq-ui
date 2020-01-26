@@ -5,14 +5,14 @@ set -euxo pipefail
 declare -r SCRIPT_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 
 function calculateContainerTag() {
-  if [[ "${TRAVIS_BRANCH}" == "master" ]]; then
+  if [[ "${BRANCH_NAME}" == "master" ]]; then
       echo 'latest'
-  elif [[ "${TRAVIS_BRANCH}" == "develop" ]]; then
+  elif [[ "${BRANCH_NAME}" == "develop" ]]; then
       echo 'develop'
-  elif [[ "${TRAVIS_BRANCH}" == "test" ]]; then
+  elif [[ "${BRANCH_NAME}" == "test" ]]; then
       echo 'test'
   else
-      echo "branch-${TRAVIS_BRANCH}"
+      echo "branch-${BRANCH_NAME}"
   fi
 }
 
