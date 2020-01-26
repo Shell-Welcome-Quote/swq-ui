@@ -50,7 +50,7 @@ jobs:
         # Notice: It doesn't work for Pull Requests.
         #         See how to fix here if you need it: https://stackoverflow.com/a/58035262
         run: echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_REF#refs/heads/} | sed 's/\//_/g')"
-      - name: Test
+      - name: Find ENV
         run: |
           if [ "${BRANCH_NAME}" == "master" ]; then
             export ENV="prod"
@@ -59,8 +59,5 @@ jobs:
           elif [ "${BRANCH_NAME}" == "test" ]; then
             export ENV="test"
           fi
-          echo "ENV: ${ENV}"
-#      - name: Build the Docker image
-#        env:
-#          GIT_BRANCH: ${{ github.ref }}
-#         run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      - name: Build the Docker image & Deploy
+        run: bash config/ci/deploy.sh "${ENV}"
