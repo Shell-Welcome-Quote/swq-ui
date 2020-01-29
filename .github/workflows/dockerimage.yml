@@ -26,8 +26,8 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 12
-      - name: NPM install
-        run: npm ci
+      - name: YARN install
+        run: yarn install
       - name: Runing prepush
         run: npm run prepush
       - name: Archive production artifacts
